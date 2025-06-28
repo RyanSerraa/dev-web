@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.webapplication.model;
+
 import com.mycompany.webapplication.entity.Account;
 
 import java.sql.PreparedStatement;
@@ -26,12 +27,11 @@ public class AccountDAO implements Dao<Account> {
             ResultSet resultado = sql.executeQuery();
             if (resultado.next()) {
                 account = new Account(
-                    resultado.getLong("id"),
-                    resultado.getString("accountNumber"),
-                    resultado.getString("agency"),
-                    resultado.getBigDecimal("balance"),
-                    resultado.getLong("userId")
-                );
+                        resultado.getLong("id"),
+                        resultado.getString("account_number"),
+                        resultado.getString("agency"),
+                        resultado.getBigDecimal("balance"),
+                        resultado.getLong("user_id"));
             }
         } catch (SQLException e) {
             System.err.println("Query de select (get account) incorreta: " + e.getMessage());
@@ -50,12 +50,11 @@ public class AccountDAO implements Dao<Account> {
             ResultSet resultado = sql.executeQuery();
             while (resultado.next()) {
                 Account account = new Account(
-                    resultado.getLong("id"),
-                    resultado.getString("accountNumber"),
-                    resultado.getString("agency"),
-                    resultado.getBigDecimal("balance"),
-                    resultado.getLong("userId")
-                );
+                        resultado.getLong("id"),
+                        resultado.getString("account_number"),
+                        resultado.getString("agency"),
+                        resultado.getBigDecimal("balance"),
+                        resultado.getLong("user_id"));
                 accounts.add(account);
             }
         } catch (SQLException e) {
@@ -65,38 +64,36 @@ public class AccountDAO implements Dao<Account> {
         }
         return accounts;
     }
-    
-    public Account getByUserId(Long userId) {
-    JDBC conexao = new JDBC();
-    Account account = null;
-    try {
-        PreparedStatement sql = conexao.getConexao().prepareStatement("SELECT * FROM Account WHERE user_id = ?");
-        sql.setLong(1, userId);
-        ResultSet resultado = sql.executeQuery();
-        if (resultado.next()) {
-            account = new Account(
-                resultado.getLong("id"),
-                resultado.getString("account_number"),
-                resultado.getString("agency"),
-                resultado.getBigDecimal("balance"),
-                resultado.getLong("user_id")
-            );
-        }
-    } catch (SQLException e) {
-        System.err.println("Erro ao buscar conta por userId: " + e.getMessage());
-    } finally {
-        conexao.closeConexao();
-    }
-    return account;
-}
 
+    public Account getByUserId(Long userId) {
+        JDBC conexao = new JDBC();
+        Account account = null;
+        try {
+            PreparedStatement sql = conexao.getConexao().prepareStatement("SELECT * FROM Account WHERE user_id = ?");
+            sql.setLong(1, userId);
+            ResultSet resultado = sql.executeQuery();
+            if (resultado.next()) {
+                account = new Account(
+                        resultado.getLong("id"),
+                        resultado.getString("account_number"),
+                        resultado.getString("agency"),
+                        resultado.getBigDecimal("balance"),
+                        resultado.getLong("user_id"));
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar conta por userId: " + e.getMessage());
+        } finally {
+            conexao.closeConexao();
+        }
+        return account;
+    }
 
     @Override
     public void insert(Account account) {
         JDBC conexao = new JDBC();
         try {
             PreparedStatement sql = conexao.getConexao().prepareStatement(
-                "INSERT INTO Account (accountNumber, agency, balance, userId) VALUES (?, ?, ?, ?)");
+                "INSERT INTO Account (account_number, agency, balance, user_id) VALUES (?, ?, ?, ?)");
             sql.setString(1, account.getAccountNumber());
             sql.setString(2, account.getAgency());
             sql.setBigDecimal(3, account.getBalance());
@@ -114,7 +111,7 @@ public class AccountDAO implements Dao<Account> {
         JDBC conexao = new JDBC();
         try {
             PreparedStatement sql = conexao.getConexao().prepareStatement(
-                "UPDATE Account SET accountNumber = ?, agency = ?, balance = ?, userId = ? WHERE id = ?");
+                "UPDATE Account SET account_number = ?, agency = ?, balance = ?, user_id = ? WHERE id = ?");
             sql.setString(1, account.getAccountNumber());
             sql.setString(2, account.getAgency());
             sql.setBigDecimal(3, account.getBalance());

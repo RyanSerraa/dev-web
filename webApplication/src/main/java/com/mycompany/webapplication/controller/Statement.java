@@ -17,19 +17,19 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@WebServlet(name = "Home", urlPatterns = {"/Home"})
-public class Home extends HttpServlet {
+@WebServlet(name = "Statement", urlPatterns = { "/statement" })
+public class Statement extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
 
         HttpSession session = request.getSession();
         Users usuario = (Users) session.getAttribute("usuario");
 
         if (usuario == null) {
             // Se não estiver logado, redireciona para login
-            response.sendRedirect("/webApplication-1.0-SNAPSHOT/Login");
+            response.sendRedirect(request.getContextPath() + "/views/login.jsp");
             return;
         }
 
@@ -40,7 +40,7 @@ public class Home extends HttpServlet {
         if (conta == null) {
             // Conta não encontrada — exibe mensagem na mesma tela
             request.setAttribute("erro", "Conta bancária não encontrada para este usuário.");
-            RequestDispatcher rd = request.getRequestDispatcher("/views/home.jsp");
+            RequestDispatcher rd = request.getRequestDispatcher("/views/statement.jsp");
             rd.forward(request, response);
             return;
         }
@@ -48,9 +48,6 @@ public class Home extends HttpServlet {
         // Extrato (transações da conta)
         AccountTransactionalDAO transacaoDAO = new AccountTransactionalDAO();
         ArrayList<AccountTransactional> extrato = transacaoDAO.getAllByAccountId(conta.getId());
-        if(extrato == null){
-            
-        }
 
         // Envia dados para o JSP
         request.setAttribute("usuario", usuario);
@@ -58,7 +55,14 @@ public class Home extends HttpServlet {
         request.setAttribute("extrato", extrato);
 
         // Exibe tela
-        RequestDispatcher rd = request.getRequestDispatcher("/views/home.jsp");
+        RequestDispatcher rd = request.getRequestDispatcher("/views/statement.jsp");
         rd.forward(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Para extrato, apenas GET é necessário
+        doGet(request, response);
     }
 }

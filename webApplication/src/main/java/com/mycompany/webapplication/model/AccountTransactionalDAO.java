@@ -15,8 +15,7 @@ public class AccountTransactionalDAO implements Dao<AccountTransactional> {
         AccountTransactional transacao = null;
         try {
             PreparedStatement sql = conexao.getConexao().prepareStatement(
-                "SELECT * FROM transactions WHERE id = ?"
-            );
+                    "SELECT * FROM transactions WHERE id = ?");
             sql.setInt(1, id);
             ResultSet rs = sql.executeQuery();
             if (rs.next()) {
@@ -29,35 +28,33 @@ public class AccountTransactionalDAO implements Dao<AccountTransactional> {
         }
         return transacao;
     }
-    
+
     public ArrayList<AccountTransactional> getAllByAccountId(long accountId) {
-    JDBC conexao = new JDBC();
-    ArrayList<AccountTransactional> lista = new ArrayList<>();
-    try {
-        PreparedStatement sql = conexao.getConexao().prepareStatement(
-            "SELECT * FROM transactions WHERE account_id = ? ORDER BY timestamp DESC"
-        );
-        sql.setLong(1, accountId);
-        ResultSet rs = sql.executeQuery();
-        while (rs.next()) {
-            lista.add(parseResultSet(rs));
+        JDBC conexao = new JDBC();
+        ArrayList<AccountTransactional> lista = new ArrayList<>();
+        try {
+            PreparedStatement sql = conexao.getConexao().prepareStatement(
+                    "SELECT * FROM transactions WHERE account_id = ? ORDER BY timestamp DESC");
+            sql.setLong(1, accountId);
+            ResultSet rs = sql.executeQuery();
+            while (rs.next()) {
+                lista.add(parseResultSet(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar transações por conta: " + e.getMessage());
+        } finally {
+            conexao.closeConexao();
         }
-    } catch (SQLException e) {
-        System.err.println("Erro ao buscar transações por conta: " + e.getMessage());
-    } finally {
-        conexao.closeConexao();
+        return lista;
     }
-    return lista;
-}
-    
+
     @Override
     public ArrayList<AccountTransactional> getAll() {
         JDBC conexao = new JDBC();
         ArrayList<AccountTransactional> lista = new ArrayList<>();
         try {
             PreparedStatement sql = conexao.getConexao().prepareStatement(
-                "SELECT * FROM transactions"
-            );
+                    "SELECT * FROM transactions");
             ResultSet rs = sql.executeQuery();
             while (rs.next()) {
                 lista.add(parseResultSet(rs));
@@ -75,8 +72,7 @@ public class AccountTransactionalDAO implements Dao<AccountTransactional> {
         JDBC conexao = new JDBC();
         try {
             PreparedStatement sql = conexao.getConexao().prepareStatement(
-                "INSERT INTO transactions (typeTransaction, amount, timestamp, description, account_id) VALUES (?, ?, ?, ?, ?)"
-            );
+                    "INSERT INTO transactions (type_transaction, amount, timestamp, description, account_id) VALUES (?, ?, ?, ?, ?)");
             sql.setString(1, transacao.getTypeTransaction().name());
             sql.setBigDecimal(2, transacao.getAmount());
             sql.setTimestamp(3, Timestamp.valueOf(transacao.getTimestamp()));
@@ -95,8 +91,7 @@ public class AccountTransactionalDAO implements Dao<AccountTransactional> {
         JDBC conexao = new JDBC();
         try {
             PreparedStatement sql = conexao.getConexao().prepareStatement(
-                "UPDATE transactions SET type_transaction = ?, amount = ?, timestamp = ?, description = ?, account_id = ? WHERE id = ?"
-            );
+                    "UPDATE transactions SET type_transaction = ?, amount = ?, timestamp = ?, description = ?, account_id = ? WHERE id = ?");
             sql.setString(1, transacao.getTypeTransaction().name());
             sql.setBigDecimal(2, transacao.getAmount());
             sql.setTimestamp(3, Timestamp.valueOf(transacao.getTimestamp()));
@@ -116,8 +111,7 @@ public class AccountTransactionalDAO implements Dao<AccountTransactional> {
         JDBC conexao = new JDBC();
         try {
             PreparedStatement sql = conexao.getConexao().prepareStatement(
-                "DELETE FROM transactions WHERE id = ?"
-            );
+                    "DELETE FROM transactions WHERE id = ?");
             sql.setInt(1, id);
             sql.executeUpdate();
         } catch (SQLException e) {

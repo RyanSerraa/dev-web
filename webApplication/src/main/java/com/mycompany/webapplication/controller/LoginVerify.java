@@ -11,14 +11,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebServlet(name = "LoginVerify", urlPatterns = {"/LoginVerify"})
+@WebServlet(name = "LoginVerify", urlPatterns = { "/LoginVerify" })
 public class LoginVerify extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        RequestDispatcher rd = request.getRequestDispatcher("/views/login.jsp");
-        rd.forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/views/login.jsp");
     }
 
     @Override
@@ -36,19 +35,18 @@ public class LoginVerify extends HttpServlet {
             RequestDispatcher rd = request.getRequestDispatcher("/views/login.jsp");
             rd.forward(request, response);
         } else {
-                UserDAO userDAO = new UserDAO();
-                Users usuario = userDAO.login(email, senha);
-                 
-                
-                    if (usuario == null) {
-                        request.setAttribute("msgError", "Credenciais inválidas");
-                        RequestDispatcher rd = request.getRequestDispatcher("/views/login.jsp");
-                        rd.forward(request, response);
-                    } else {
-                        HttpSession session = request.getSession();
-                        session.setAttribute("usuario", usuario);
-                        response.sendRedirect("Home");
-                    }
+            UserDAO userDAO = new UserDAO();
+            Users usuario = userDAO.login(email, senha);
+
+            if (usuario == null) {
+                request.setAttribute("msgError", "Credenciais inválidas");
+                RequestDispatcher rd = request.getRequestDispatcher("/views/login.jsp");
+                rd.forward(request, response);
+            } else {
+                HttpSession session = request.getSession();
+                session.setAttribute("usuario", usuario);
+                response.sendRedirect("/webApplication-1.0-SNAPSHOT/Home");
+            }
         }
     }
 }
